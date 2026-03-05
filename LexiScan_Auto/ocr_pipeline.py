@@ -1,51 +1,35 @@
-# PURPOSE: Convert PDF contracts into clean text using OCR
-
-import pytesseract
 from pdf2image import convert_from_path
-import re
+import pytesseract
+from PIL import Image
 import os
 
-# Explicit Tesseract path (Windows safety)
+# ADD TESSERACT PATH HERE
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
 def pdf_to_text(pdf_path):
-    """
-    Converts PDF pages to raw OCR text
-    """
-    if not os.path.exists(pdf_path):
-        raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
-    print(f"📄 Reading PDF: {pdf_path}")
+    pages = convert_from_path(
+        pdf_path,
+        dpi=300,
+        poppler_path=r"C:\poppler-25.12.0\Library\bin"
+    )
 
-    pages = convert_from_path(pdf_path, dpi=300)
-    full_text = ""
+    text = ""
 
     for i, page in enumerate(pages):
-        print(f"🔍 OCR on page {i + 1}")
-        text = pytesseract.image_to_string(page, lang="eng")
-        full_text += text + "\n"
+        print(f"🔍 OCR on page {i+1}")
+        page_text = pytesseract.image_to_string(page, lang="eng")
+        text += page_text
 
-    return full_text
-
-
-def clean_text(text):
-    """
-    Cleans OCR output
-    """
-    text = re.sub(r"\s+", " ", text)          # remove extra spaces
-    text = re.sub(r"[^\x00-\x7F]+", " ", text)  # remove weird chars
-    return text.strip()
+    return text
 
 
-# =========================
-# TEST THE OCR PIPELINE
-# =========================
-if __name__ == "__main__":
-    sample_pdf = "data/sample_pdfs/Service1.pdf"
+# Sample PDF path
+sample_pdf = r"data\sample_pdfs\Service1.pdf"
 
-    raw_text = pdf_to_text(sample_pdf)
-    cleaned_text = clean_text(raw_text)
+# Run OCR
+raw_text = pdf_to_text(sample_pdf)
 
-    print("\n✅ OCR OUTPUT (First 500 characters):\n")
-    print(cleaned_text[:500])
+print("\nExtracted Text:\n")
+print(raw_text)
