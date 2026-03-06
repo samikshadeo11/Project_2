@@ -1,0 +1,11 @@
+pytesseract
+pdf2image
+pillow
+transformers
+torch
+spacy
+pandas
+numpy
+scikit-learn
+fastapi
+uvicorn

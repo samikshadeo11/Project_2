@@ -2,5 +2,4 @@ LexiScan_Auto/models/
 LexiScan_Auto/outputs/
 LexiScan_Auto/checkpoints/
 
-__pycache__/
-*.pyc
+models/checkpoint-*
